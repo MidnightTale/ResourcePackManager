@@ -13,7 +13,7 @@ softdepend:
 - BackpackPlus
 - vane-core
 - RealisticSurvival
-
+folia-supported:  true
 commands:
   resourcepackmanager:
     aliases:

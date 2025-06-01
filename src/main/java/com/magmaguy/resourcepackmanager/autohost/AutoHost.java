@@ -6,6 +6,8 @@ import com.magmaguy.magmacore.util.Logger;
 import com.magmaguy.resourcepackmanager.config.DataConfig;
 import com.magmaguy.resourcepackmanager.config.DefaultConfig;
 import lombok.Getter;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
+import me.nahu.scheduler.wrapper.task.WrappedTask;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -28,7 +30,7 @@ import java.util.UUID;
 public class AutoHost {
     private static final String finalURL = "http://magmaguy.com:50000/";
     private static final UUID pluginRSPUUID = UUID.randomUUID();
-    private static BukkitTask keepAlive = null;
+    private static WrappedTask keepAlive = null;
     @Getter
     private static String rspUUID = null;
     private static boolean firstUpload = true;
@@ -47,11 +49,11 @@ public class AutoHost {
         if (Mix.getFinalResourcePack() == null) return;
         Logger.info("Starting autohost!");
         firstUpload = true;
-        new BukkitRunnable() {
+        new WrappedRunnable() {
             @Override
             public void run() {
                 checkFileExistence();
-                keepAlive = new BukkitRunnable() {
+                keepAlive = new WrappedRunnable() {
                     int counter = 0;
 
                     @Override
@@ -73,9 +75,9 @@ public class AutoHost {
                             counter++;
                         }
                     }
-                }.runTaskTimerAsynchronously(ResourcePackManager.plugin, 0, 6 * 60 * 60 * 20L);
+                }.runTaskTimerAsynchronously(ResourcePackManager.instance.scheduler, 1, 6 * 60 * 60 * 20L);
             }
-        }.runTaskAsynchronously(ResourcePackManager.plugin);
+        }.runTaskAsynchronously(ResourcePackManager.instance.scheduler);
     }
 
     private static void checkFileExistence() {
@@ -192,16 +194,16 @@ public class AutoHost {
 
                 if (responseEntity != null) {
                     // Save the response as a zip file
-                    File zipFile = new File(ResourcePackManager.plugin.getDataFolder().getAbsolutePath() + File.separatorChar + "data_compliance" + File.separatorChar + "data.zip");
+                    File zipFile = new File(ResourcePackManager.instance.getDataFolder().getAbsolutePath() + File.separatorChar + "data_compliance" + File.separatorChar + "data.zip");
                     if (!zipFile.getParentFile().exists()) zipFile.mkdirs();
                     if (zipFile.exists()) zipFile.delete();
                     zipFile.createNewFile();
                     try (FileOutputStream outStream = new FileOutputStream(zipFile)) {
                         responseEntity.writeTo(outStream);
                     }
-                    InputStream inputStream = ResourcePackManager.plugin.getResource("ReadMe.md");
+                    InputStream inputStream = ResourcePackManager.instance.getResource("ReadMe.md");
 
-                    File readMe = new File(ResourcePackManager.plugin.getDataFolder().getAbsolutePath() + File.separatorChar + "data_compliance" + File.separatorChar + "ReadMe.md");
+                    File readMe = new File(ResourcePackManager.instance.getDataFolder().getAbsolutePath() + File.separatorChar + "data_compliance" + File.separatorChar + "ReadMe.md");
                     if (!readMe.exists()) readMe.createNewFile();
 
                     // Copy the InputStream to the file

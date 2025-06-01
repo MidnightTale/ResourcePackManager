@@ -36,6 +36,6 @@ public class DataComplianceRequestCommand extends AdvancedCommand {
                     e.printStackTrace();
                 }
             }
-        }.runTaskAsynchronously(ResourcePackManager.plugin);
+        }.runTaskAsynchronously(ResourcePackManager.instance);
     }
 }

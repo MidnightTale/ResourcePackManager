@@ -15,13 +15,13 @@ public class BlueprintFolder {
 
     public static void initialize() {
         Logger.info("Creating blueprint folder");
-        File blueprintDirectory = new File(ResourcePackManager.plugin.getDataFolder().getAbsolutePath() + File.separatorChar + "blueprint");
+        File blueprintDirectory = new File(ResourcePackManager.instance.getDataFolder().getAbsolutePath() + File.separatorChar + "blueprint");
         if (!blueprintDirectory.exists()) blueprintDirectory.mkdir();
         Logger.info("Copying image");
         File imageFile = new File(blueprintDirectory.getAbsolutePath() + File.separatorChar + "pack.png");
         if (!imageFile.exists()) {
             try {
-                InputStream inputStream = ResourcePackManager.plugin.getResource("pack.png");
+                InputStream inputStream = ResourcePackManager.instance.getResource("pack.png");
                 Files.copy(inputStream, imageFile.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -31,7 +31,7 @@ public class BlueprintFolder {
         File mcmetaFile = new File(blueprintDirectory.getAbsolutePath() + File.separatorChar + "pack.mcmeta");
         if (!mcmetaFile.exists()) {
             try {
-                InputStream inputStream = ResourcePackManager.plugin.getResource("pack.mcmeta");
+                InputStream inputStream = ResourcePackManager.instance.getResource("pack.mcmeta");
                 Files.copy(inputStream, mcmetaFile.toPath());
                 inputStream.close();
             } catch (IOException e) {

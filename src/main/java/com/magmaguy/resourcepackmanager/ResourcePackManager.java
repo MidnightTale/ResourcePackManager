@@ -14,13 +14,17 @@ import com.magmaguy.resourcepackmanager.config.DefaultConfig;
 import com.magmaguy.resourcepackmanager.Listeners.ResourcePackGeneratedEvent;
 import com.magmaguy.resourcepackmanager.mixer.Mix;
 import com.magmaguy.resourcepackmanager.playermanager.PlayerManager;
+import me.nahu.scheduler.wrapper.WrappedScheduler;
+import me.nahu.scheduler.wrapper.WrappedSchedulerBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ResourcePackManager extends JavaPlugin {
 
-    public static JavaPlugin plugin;
+    public static ResourcePackManager instance;
+    public final WrappedSchedulerBuilder schedulerBuilder = WrappedSchedulerBuilder.builder().plugin(instance);
+    public final WrappedScheduler scheduler = schedulerBuilder.build();
 
     @Override
     public void onEnable() {
@@ -33,7 +37,8 @@ public class ResourcePackManager extends JavaPlugin {
         Bukkit.getLogger().info("ResourcePackManager v." + this.getDescription().getVersion());
         MagmaCore.onEnable();
 
-        plugin = this;
+
+        instance = this;
         new DefaultConfig();
         new DataConfig();
         BlueprintFolder.initialize();
@@ -41,10 +46,9 @@ public class ResourcePackManager extends JavaPlugin {
         if (DefaultConfig.isAutoHost())
             Bukkit.getPluginManager().registerEvents(new PlayerManager(), this);
         CommandManager commandManager = new CommandManager(this, "resourcepackmanager");
-        commandManager.registerCommand(new ReloadCommand());
+        commandManager.registerCommand(new ReloadCommand()); // Disabled for Folia compatibility due to potential issues with plugin reloading.
         commandManager.registerCommand(new DataComplianceRequestCommand());
-        if (Bukkit.getPluginManager().isPluginEnabled("FreeMinecraftModels"))
-            Bukkit.getPluginManager().registerEvents(new ResourcePackGeneratedEvent(), this);
+        if (Bukkit.getPluginManager().isPluginEnabled("FreeMinecraftModels")) Bukkit.getPluginManager().registerEvents(new ResourcePackGeneratedEvent(), this); // Disabled for Folia compatibility due to plugin reloading.
         Bukkit.getPluginManager().registerEvents(new VersionChecker.VersionCheckerEvents(), this);
         AutoHost.initialize();
 
