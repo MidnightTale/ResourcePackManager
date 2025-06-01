@@ -44,7 +44,7 @@ public class Mix {
 
     private static boolean initializeDefaultPluginFolders() {
         try {
-            mixerFolder = new File(ResourcePackManager.instance.getDataFolder().getAbsolutePath() + File.separatorChar + "mixer");
+            mixerFolder = new File(ResourcePackManager.plugin.getDataFolder().getAbsolutePath() + File.separatorChar + "mixer");
             if (!mixerFolder.exists()) mixerFolder.mkdir();
 
             File outputFolder = getOutputFolder();
@@ -163,7 +163,7 @@ public class Mix {
                     Logger.warn("A resource pack was null by the time it was meant to be unzipped!");
                     return;
                 }
-                File file = new File(ResourcePackManager.instance.getDataFolder().getAbsolutePath() + File.separatorChar + "output" + File.separatorChar + resourcePack.getName().replace(".zip", ""));
+                File file = new File(ResourcePackManager.plugin.getDataFolder().getAbsolutePath() + File.separatorChar + "output" + File.separatorChar + resourcePack.getName().replace(".zip", ""));
                 ZipFile.unzip(resourcePack, file);
                 stripDirectoryMetadata(file);
             } catch (Exception e) {
@@ -209,7 +209,7 @@ public class Mix {
         }
         if (!DefaultConfig.getResourcePackRerouting().isEmpty() && !DefaultConfig.getResourcePackRerouting().isBlank()){
             try{
-                File rerouteFolder = new File(ResourcePackManager.instance.getDataFolder().getParentFile().getAbsolutePath() + File.separatorChar + DefaultConfig.getResourcePackRerouting());
+                File rerouteFolder = new File(ResourcePackManager.plugin.getDataFolder().getParentFile().getAbsolutePath() + File.separatorChar + DefaultConfig.getResourcePackRerouting());
                 if (!rerouteFolder.exists()) {
                     Logger.warn("Failed to reroute zipped file to " + rerouteFolder.getAbsolutePath() + " because that folder does not exist!");
                 } else if (!rerouteFolder.isDirectory()){
@@ -239,7 +239,7 @@ public class Mix {
     }
 
     private static File getOutputFolder() {
-        return new File(ResourcePackManager.instance.getDataFolder().getAbsolutePath() + File.separatorChar + "output");
+        return new File(ResourcePackManager.plugin.getDataFolder().getAbsolutePath() + File.separatorChar + "output");
     }
 
     private static File getOutputResourcePackFolder() {

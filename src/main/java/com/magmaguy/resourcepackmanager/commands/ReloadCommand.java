@@ -17,15 +17,15 @@ public class ReloadCommand extends AdvancedCommand {
     }
 
     public static void reloadPlugin(CommandSender sender) {
-        ResourcePackManager.instance.onDisable();
-        ResourcePackManager.instance.onEnable();
+        ResourcePackManager.plugin.onDisable();
+        ResourcePackManager.plugin.onEnable();
         Logger.sendMessage(sender, "Reloaded the plugin!");
     }
 
     @Override
     public void execute(CommandData commandData) {
-        ResourcePackManager.instance.onDisable();
-        ResourcePackManager.instance.onEnable();
+        ResourcePackManager.plugin.onDisable();
+        ResourcePackManager.plugin.onEnable();
         Logger.sendMessage(commandData.getCommandSender(), "Reloaded the plugin!");
     }
 }

@@ -14,6 +14,7 @@ import com.magmaguy.resourcepackmanager.config.DefaultConfig;
 import com.magmaguy.resourcepackmanager.Listeners.ResourcePackGeneratedEvent;
 import com.magmaguy.resourcepackmanager.mixer.Mix;
 import com.magmaguy.resourcepackmanager.playermanager.PlayerManager;
+import lombok.Getter;
 import me.nahu.scheduler.wrapper.WrappedScheduler;
 import me.nahu.scheduler.wrapper.WrappedSchedulerBuilder;
 import org.bukkit.Bukkit;
@@ -22,9 +23,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class ResourcePackManager extends JavaPlugin {
 
-    public static ResourcePackManager instance;
-    public final WrappedSchedulerBuilder schedulerBuilder = WrappedSchedulerBuilder.builder().plugin(instance);
-    public final WrappedScheduler scheduler = schedulerBuilder.build();
+    public static JavaPlugin plugin;
+    @Getter
+    private static WrappedScheduler scheduler;
 
     @Override
     public void onEnable() {
@@ -38,7 +39,8 @@ public class ResourcePackManager extends JavaPlugin {
         MagmaCore.onEnable();
 
 
-        instance = this;
+        plugin = this;
+        scheduler = WrappedSchedulerBuilder.builder().plugin(this).build(); // Fixed the null plugin
         new DefaultConfig();
         new DataConfig();
         BlueprintFolder.initialize();
@@ -49,11 +51,11 @@ public class ResourcePackManager extends JavaPlugin {
         commandManager.registerCommand(new ReloadCommand()); // Disabled for Folia compatibility due to potential issues with plugin reloading.
         commandManager.registerCommand(new DataComplianceRequestCommand());
         if (Bukkit.getPluginManager().isPluginEnabled("FreeMinecraftModels")) Bukkit.getPluginManager().registerEvents(new ResourcePackGeneratedEvent(), this); // Disabled for Folia compatibility due to plugin reloading.
-        Bukkit.getPluginManager().registerEvents(new VersionChecker.VersionCheckerEvents(), this);
+//        Bukkit.getPluginManager().registerEvents(new VersionChecker.VersionCheckerEvents(), this);
         AutoHost.initialize();
 
         Metrics metrics = new Metrics(this, 22867);
-        VersionChecker.checkPluginVersion();
+//        VersionChecker.checkPluginVersion();
     }
 
     @Override

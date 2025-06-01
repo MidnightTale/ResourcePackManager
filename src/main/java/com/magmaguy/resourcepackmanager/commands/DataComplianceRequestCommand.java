@@ -5,6 +5,7 @@ import com.magmaguy.magmacore.command.CommandData;
 import com.magmaguy.magmacore.util.Logger;
 import com.magmaguy.resourcepackmanager.ResourcePackManager;
 import com.magmaguy.resourcepackmanager.autohost.AutoHost;
+import me.nahu.scheduler.wrapper.runnable.WrappedRunnable;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class DataComplianceRequestCommand extends AdvancedCommand {
             return;
         }
 
-        new BukkitRunnable() {
+        new WrappedRunnable() {
             @Override
             public void run() {
                 try {
@@ -36,6 +37,6 @@ public class DataComplianceRequestCommand extends AdvancedCommand {
                     e.printStackTrace();
                 }
             }
-        }.runTaskAsynchronously(ResourcePackManager.instance);
+        }.runTaskAsynchronously(ResourcePackManager.getScheduler());
     }
 }

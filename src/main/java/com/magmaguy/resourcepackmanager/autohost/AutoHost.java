@@ -75,9 +75,9 @@ public class AutoHost {
                             counter++;
                         }
                     }
-                }.runTaskTimerAsynchronously(ResourcePackManager.instance.scheduler, 1, 6 * 60 * 60 * 20L);
+                }.runTaskTimerAsynchronously(ResourcePackManager.getScheduler(), 1, 6 * 60 * 60 * 20L);
             }
-        }.runTaskAsynchronously(ResourcePackManager.instance.scheduler);
+        }.runTaskAsynchronously(ResourcePackManager.getScheduler());
     }
 
     private static void checkFileExistence() {
@@ -194,16 +194,16 @@ public class AutoHost {
 
                 if (responseEntity != null) {
                     // Save the response as a zip file
-                    File zipFile = new File(ResourcePackManager.instance.getDataFolder().getAbsolutePath() + File.separatorChar + "data_compliance" + File.separatorChar + "data.zip");
+                    File zipFile = new File(ResourcePackManager.plugin.getDataFolder().getAbsolutePath() + File.separatorChar + "data_compliance" + File.separatorChar + "data.zip");
                     if (!zipFile.getParentFile().exists()) zipFile.mkdirs();
                     if (zipFile.exists()) zipFile.delete();
                     zipFile.createNewFile();
                     try (FileOutputStream outStream = new FileOutputStream(zipFile)) {
                         responseEntity.writeTo(outStream);
                     }
-                    InputStream inputStream = ResourcePackManager.instance.getResource("ReadMe.md");
+                    InputStream inputStream = ResourcePackManager.plugin.getResource("ReadMe.md");
 
-                    File readMe = new File(ResourcePackManager.instance.getDataFolder().getAbsolutePath() + File.separatorChar + "data_compliance" + File.separatorChar + "ReadMe.md");
+                    File readMe = new File(ResourcePackManager.plugin.getDataFolder().getAbsolutePath() + File.separatorChar + "data_compliance" + File.separatorChar + "ReadMe.md");
                     if (!readMe.exists()) readMe.createNewFile();
 
                     // Copy the InputStream to the file
