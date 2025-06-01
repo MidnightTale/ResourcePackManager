@@ -41,10 +41,9 @@ public class ResourcePackManager extends JavaPlugin {
         if (DefaultConfig.isAutoHost())
             Bukkit.getPluginManager().registerEvents(new PlayerManager(), this);
         CommandManager commandManager = new CommandManager(this, "resourcepackmanager");
-        commandManager.registerCommand(new ReloadCommand());
+        // commandManager.registerCommand(new ReloadCommand()); // Disabled for Folia compatibility due to potential issues with plugin reloading.
         commandManager.registerCommand(new DataComplianceRequestCommand());
-        if (Bukkit.getPluginManager().isPluginEnabled("FreeMinecraftModels"))
-            Bukkit.getPluginManager().registerEvents(new ResourcePackGeneratedEvent(), this);
+        // if (Bukkit.getPluginManager().isPluginEnabled("FreeMinecraftModels")) Bukkit.getPluginManager().registerEvents(new ResourcePackGeneratedEvent(), this); // Disabled for Folia compatibility due to plugin reloading.
         Bukkit.getPluginManager().registerEvents(new VersionChecker.VersionCheckerEvents(), this);
         AutoHost.initialize();
 

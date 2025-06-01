@@ -9,6 +9,6 @@ import org.bukkit.event.Listener;
 public class ResourcePackGeneratedEvent implements Listener {
     @EventHandler
     public void onResourcePackGenerated(ResourcePackGenerationEvent event) {
-        ReloadCommand.reloadPlugin(Bukkit.getConsoleSender());
+        // ReloadCommand.reloadPlugin(Bukkit.getConsoleSender()); // Disabled for Folia compatibility as plugin reloading can cause issues.
     }
 }

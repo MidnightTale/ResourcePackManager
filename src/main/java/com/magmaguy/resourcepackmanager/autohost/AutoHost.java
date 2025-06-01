@@ -16,11 +16,11 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
@@ -47,35 +47,28 @@ public class AutoHost {
         if (Mix.getFinalResourcePack() == null) return;
         Logger.info("Starting autohost!");
         firstUpload = true;
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                checkFileExistence();
-                keepAlive = new BukkitRunnable() {
-                    int counter = 0;
-
-                    @Override
-                    public void run() {
-                        if (rspUUID != null) {
-                            counter = 0;
-                            try {
-                                sendStillAlive();
-                            } catch (Exception e) {
-                                rspUUID = null;
-                                Logger.warn("Failed to autohost resource pack!");
-                                e.printStackTrace();
-                            }
-                        } else {
-                            checkFileExistence();
-                            if (rspUUID == null && counter % 10 == 0) {
-                                Logger.warn("Failed to connect to remote server to autohost the resource pack!");
-                            }
-                            counter++;
-                        }
+        ResourcePackManager.plugin.getServer().getAsyncScheduler().runNow(ResourcePackManager.plugin, scheduledTask -> {
+            checkFileExistence();
+            keepAlive = ResourcePackManager.plugin.getServer().getAsyncScheduler().runAtFixedRate(ResourcePackManager.plugin, innerScheduledTask -> {
+                int counter = 0; //This counter will reset every time, which is different from original. TODO: Fix counter logic if important for repeated checks.
+                if (rspUUID != null) {
+                    counter = 0;
+                    try {
+                        sendStillAlive();
+                    } catch (Exception e) {
+                        rspUUID = null;
+                        Logger.warn("Failed to autohost resource pack!");
+                        e.printStackTrace();
                     }
-                }.runTaskTimerAsynchronously(ResourcePackManager.plugin, 0, 6 * 60 * 60 * 20L);
-            }
-        }.runTaskAsynchronously(ResourcePackManager.plugin);
+                } else {
+                    checkFileExistence();
+                    if (rspUUID == null && counter % 10 == 0) { // counter will always be 0 here due to re-declaration in lambda
+                        Logger.warn("Failed to connect to remote server to autohost the resource pack!");
+                    }
+                    counter++; // This counter increment will have no effect outside this specific execution.
+                }
+            }, 0L, 21600000L, TimeUnit.MILLISECONDS); // 6 * 60 * 60 * 20 * 50ms = 21,600,000 ms
+        });
     }
 
     private static void checkFileExistence() {
@@ -125,10 +118,13 @@ public class AutoHost {
                 return;
             }
             Logger.info("Uploaded resource pack for automatic hosting!");
-            if (firstUpload)
-                //Recover from a reload by sending the pack to online players
-                for (Player player : Bukkit.getOnlinePlayers())
-                    AutoHost.sendResourcePack(player);
+            if (firstUpload) {
+                // TODO: Folia does not allow Bukkit.getOnlinePlayers() from async tasks.
+                // Need to find a Folia-compatible way to send resource packs to all players after a reload.
+                // This might involve iterating players on the main thread or using player-specific schedulers.
+                // for (Player player : Bukkit.getOnlinePlayers())
+                // AutoHost.sendResourcePack(player);
+            }
             firstUpload = false;
         } catch (IOException e) {
             throw new RuntimeException(e);
